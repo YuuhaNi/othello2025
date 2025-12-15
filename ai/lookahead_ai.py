@@ -129,6 +129,9 @@ def lookahead_2(board, stone):
 class LookaheadAI:
     """2手先読みAIクラス"""
 
+    def name(self):
+        return "先読みAI"
+
     def face(self):
         return "🔮"  # 水晶玉（未来を見る）
 

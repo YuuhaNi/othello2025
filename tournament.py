@@ -382,20 +382,20 @@ def calculate_scores(user_ais, reference_ais, board_size=6):
                 total_score += 3  # 勝ち
                 total_stones_taken += black_count
                 opponent_stones_black = black_count
-                print(f"  vs {ref_ai.face()}: WIN (黒) +3 [{black_count}-{white_count}]")
+                print(f"  vs {ref_ai.face()}{ref_ai.name()}: WIN (黒) +3 [{black_count}-{white_count}]")
             elif result1 == 0:
                 total_score += 2  # 引き分け
                 total_stones_taken += black_count
                 opponent_stones_black = black_count
-                print(f"  vs {ref_ai.face()}: DRAW (黒) +2 [{black_count}-{white_count}]")
+                print(f"  vs {ref_ai.face()}{ref_ai.name()}: DRAW (黒) +2 [{black_count}-{white_count}]")
             elif result1 == 2:
                 total_score += 1  # 負け
                 total_stones_taken += black_count
                 opponent_stones_black = black_count
-                print(f"  vs {ref_ai.face()}: LOSE (黒) +1 [{black_count}-{white_count}]")
+                print(f"  vs {ref_ai.face()}{ref_ai.name()}: LOSE (黒) +1 [{black_count}-{white_count}]")
             else:
                 # エラー：盤面サイズ非対応など実行不能
-                print(f"  vs {ref_ai.face()}: ERROR (黒) - AI動作不能のため0点扱い")
+                print(f"  vs {ref_ai.face()}{ref_ai.name()}: ERROR (黒) - AI動作不能のため0点扱い")
                 is_ai_working = False
                 break
 
@@ -407,20 +407,20 @@ def calculate_scores(user_ais, reference_ais, board_size=6):
                 total_score += 3  # 勝ち
                 total_stones_taken += white_count
                 opponent_stones_white = white_count
-                print(f"  vs {ref_ai.face()}: WIN (白) +3 [{black_count}-{white_count}]")
+                print(f"  vs {ref_ai.face()}{ref_ai.name()}: WIN (白) +3 [{black_count}-{white_count}]")
             elif result2 == 0:
                 total_score += 2  # 引き分け
                 total_stones_taken += white_count
                 opponent_stones_white = white_count
-                print(f"  vs {ref_ai.face()}: DRAW (白) +2 [{black_count}-{white_count}]")
+                print(f"  vs {ref_ai.face()}{ref_ai.name()}: DRAW (白) +2 [{black_count}-{white_count}]")
             elif result2 == 1:
                 total_score += 1  # 負け
                 total_stones_taken += white_count
                 opponent_stones_white = white_count
-                print(f"  vs {ref_ai.face()}: LOSE (白) +1 [{black_count}-{white_count}]")
+                print(f"  vs {ref_ai.face()}{ref_ai.name()}: LOSE (白) +1 [{black_count}-{white_count}]")
             else:
                 # エラー：盤面サイズ非対応など実行不能
-                print(f"  vs {ref_ai.face()}: ERROR (白) - AI動作不能のため0点扱い")
+                print(f"  vs {ref_ai.face()}{ref_ai.name()}: ERROR (白) - AI動作不能のため0点扱い")
                 is_ai_working = False
                 break
 
@@ -538,6 +538,9 @@ def battle_with_myai(myai_func, board_size=6):
         def __init__(self, func):
             self.func = func
 
+        def name(self):
+            return "あなたのAI"
+
         def face(self):
             return "🎓"
 
@@ -562,7 +565,8 @@ def battle_with_myai(myai_func, board_size=6):
         # 先攻（黒番）
         result1, black_count, white_count = run_match(myai_wrapper, ref_ai, board_size)
         results.append({
-            'opponent': ref_ai.face(),
+            'opponent_name': ref_ai.name(),
+            'opponent_face': ref_ai.face(),
             'turn': '先攻',
             'result': result1,
             'stones': black_count
@@ -573,7 +577,8 @@ def battle_with_myai(myai_func, board_size=6):
         # 後攻（白番）
         result2, black_count, white_count = run_match(ref_ai, myai_wrapper, board_size)
         results.append({
-            'opponent': ref_ai.face(),
+            'opponent_name': ref_ai.name(),
+            'opponent_face': ref_ai.face(),
             'turn': '後攻',
             'result': result2,
             'stones': white_count
@@ -588,9 +593,9 @@ def battle_with_myai(myai_func, board_size=6):
                      "負" if (r['turn'] == '先攻' and r['result'] == 2) or (r['turn'] == '後攻' and r['result'] == 1) else \
                      "分" if r['result'] == 0 else "エラー"
         if r['result'] != -1:
-            print(f"{i}. vs {r['opponent']} ({r['turn']}): {result_str} - {r['stones']}枚")
+            print(f"{i}. vs {r['opponent_face']}{r['opponent_name']} ({r['turn']}): {result_str} - {r['stones']}枚")
         else:
-            print(f"{i}. vs {r['opponent']} ({r['turn']}): {result_str}")
+            print(f"{i}. vs {r['opponent_face']}{r['opponent_name']} ({r['turn']}): {result_str}")
     print(f"総獲得枚数: {total_stones}枚")
     print("=" * 40)
 

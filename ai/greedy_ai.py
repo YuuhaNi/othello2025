@@ -79,6 +79,9 @@ def greedy_place(board, stone):
 class GreedyAI:
     """貪欲AIクラス"""
 
+    def name(self):
+        return "貪欲AI"
+
     def face(self):
         return "🤑"  # お金の顔（貪欲なイメージ）
 

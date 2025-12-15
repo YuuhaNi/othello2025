@@ -88,6 +88,9 @@ def corner_place(board, stone):
 class CornerAI:
     """角優先AIクラス"""
 
+    def name(self):
+        return "角優先AI"
+
     def face(self):
         return "📐"  # 角度記号（角のイメージ）
 
