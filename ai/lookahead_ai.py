@@ -9,7 +9,10 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from othello import can_place_x_y, move_stone, copy
+try:
+    from ..othello import can_place_x_y, move_stone, copy
+except ImportError:
+    from othello import can_place_x_y, move_stone, copy
 
 def count_stones(board, stone):
     """

@@ -11,7 +11,10 @@ import os
 # 親ディレクトリをパスに追加してothelloモジュールをインポート
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from othello import can_place_x_y
+try:
+    from ..othello import can_place_x_y
+except ImportError:
+    from othello import can_place_x_y
 
 def count_flips(board, stone, x, y):
     """

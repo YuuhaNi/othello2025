@@ -11,10 +11,18 @@ import os
 
 sys.path.append('ai')
 
-from othello import can_place_x_y, copy, move_stone, can_place, safe_place, BLACK, WHITE
-from greedy_ai import GreedyAI
-from corner_ai import CornerAI
-from lookahead_ai import LookaheadAI
+try:
+    # パッケージとして使われる場合（from hachi import ...）
+    from .othello import can_place_x_y, copy, move_stone, can_place, safe_place, BLACK, WHITE
+    from .ai.greedy_ai import GreedyAI
+    from .ai.corner_ai import CornerAI
+    from .ai.lookahead_ai import LookaheadAI
+except ImportError:
+    # 直接実行される場合（python tournament.py）
+    from othello import can_place_x_y, copy, move_stone, can_place, safe_place, BLACK, WHITE
+    from greedy_ai import GreedyAI
+    from corner_ai import CornerAI
+    from lookahead_ai import LookaheadAI
 
 
 class UserAIAdapter:

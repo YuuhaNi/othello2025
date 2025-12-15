@@ -10,7 +10,10 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from othello import can_place_x_y
+try:
+    from ..othello import can_place_x_y
+except ImportError:
+    from othello import can_place_x_y
 import random
 
 def get_corners(board):
