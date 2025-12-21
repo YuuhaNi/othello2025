@@ -2,27 +2,36 @@
 
 `battle.py` を使って、オセロAI同士を対戦させる方法を説明します。
 
-## 1. GitHubからクローンしたmyai同士の1対1対戦
+## 1. GitHubからクローンしたmyai同士の対戦（先攻・後攻2試合）
 
 GitHubから2つのリポジトリをクローンして、それぞれの`myai`関数を対戦させます。
+**先攻・後攻を入れ替えて2試合**行い、総合結果を表示します。
 
 ```python
 # GitHubからリポジトリをクローン
 !git clone https://github.com/user1/othello2025.git a008
 !git clone https://github.com/user2/othello2025.git a009
 
+# Pythonパスに追加（Colabの場合）
+import sys
+sys.path.append('/content/a008')
+sys.path.append('/content/a009')
+
+# またはディレクトリ移動
+# %cd a008
+
 # myai関数をインポート
 from a008 import myai as myai008
 from a009 import myai as myai009
 
-# 対戦させる
+# 対戦させる（2試合）
 from battle import battle_myais
 battle_myais(myai008, myai009, name1="a008", name2="a009", delay=0.5)
 ```
 
 ### パラメータ
-- `myai1`: 黒番（先攻）のmyai関数
-- `myai2`: 白番（後攻）のmyai関数
+- `myai1`: 1つ目のmyai関数
+- `myai2`: 2つ目のmyai関数
 - `name1`: AI1の名前（表示用）
 - `name2`: AI2の名前（表示用）
 - `board_size`: 盤面サイズ（6 or 8、デフォルト: 6）
@@ -30,103 +39,24 @@ battle_myais(myai008, myai009, name1="a008", name2="a009", delay=0.5)
 - `delay`: 各手の後の待機時間（秒、デフォルト: 0.5）
 
 ### 出力
+- 第1試合: myai1 (黒/先攻) vs myai2 (白/後攻)
+- 第2試合: myai2 (黒/先攻) vs myai1 (白/後攻)
 - リアルタイムで盤面が更新される（Canvas表示）
 - 各手ごとに座標、石数、思考時間を表示
-- 最終結果（勝者、石数、思考時間）を表示
-
----
-
-## 2. myai同士の先攻・後攻入れ替え2試合対戦
-
-先攻・後攻を入れ替えて2試合行い、総合結果を表示します。
-
-```python
-from a008 import myai as myai008
-from a009 import myai as myai009
-
-from battle import battle_myais_double
-battle_myais_double(myai008, myai009, name1="a008", name2="a009", delay=0.5)
-```
-
-### 出力
-- 第1試合: myai008 (黒) vs myai009 (白)
-- 第2試合: myai009 (黒) vs myai008 (白)
 - 総合結果: 勝ち数、石数の合計、総合優勝者
 
 ---
 
-## 3. 既存AIとの対戦
-
-aiフォルダ内の既存AI（GreedyAI、CornerAI、LookaheadAI）と対戦させます。
+## 2. カスタムmyai vs 既存AI
 
 ```python
-from battle import run_othello_live
-from ai.greedy_ai import GreedyAI
-from ai.corner_ai import CornerAI
-
-# 貪欲AI vs 角優先AI
-run_othello_live(GreedyAI(), CornerAI(), board=6, delay=0.5)
-```
-
-### カスタムmyai vs 既存AI
-
-```python
-from battle import battle_myais
-from ai.greedy_ai import GreedyAI
-
-# myaiをインポート
+from ai.greedy_ai import greedy_place
 from a008 import myai as myai008
 
-# カスタムmyai vs 貪欲AI
-# 既存AIはplace()メソッドを持つので、そのまま渡せる
-from battle import run_othello_live
-from othello import PandaAI
-
-run_othello_live(PandaAI(myai008), GreedyAI(), board=6, delay=0.5)
+# myai vs 既存AI関数を2試合対戦
+from battle import battle_myais
+battle_myais(myai008, greedy_place, name1="a008", name2="greedy", delay=0.5)
 ```
-
----
-
-## 4. 既存AIの総当たり戦
-
-複数の既存AIで総当たり戦を行います。
-
-```python
-from battle import battle_tournament
-from ai.greedy_ai import GreedyAI
-from ai.corner_ai import CornerAI
-from ai.lookahead_ai import LookaheadAI
-
-ai_list = [
-    ("貪欲AI", GreedyAI()),
-    ("角優先AI", CornerAI()),
-    ("先読みAI", LookaheadAI()),
-]
-
-battle_tournament(ai_list, board_size=6, delay=0.3)
-```
-
-### 出力
-- 全ての組み合わせで対戦（N個のAIで N×(N-1) 試合）
-- 最終順位表（勝ち点、勝敗、石数）
-
----
-
-## 5. GitHubから投稿されたユーザーのmyai同士の総当たり戦
-
-JSONLファイルからユーザーAIを読み込んで総当たり戦を行います。
-
-```python
-from battle import battle_user_ais
-
-battle_user_ais('userdata/filtered_logs.jsonl', board_size=6, delay=0.3)
-```
-
-### 機能
-- JSONLファイルから全てのユーザーAIを読み込み
-- エラーのないAIのみを対戦させる
-- 総当たり戦を実行
-- 最終順位表を表示
 
 ---
 
@@ -185,13 +115,18 @@ battle_user_ais('userdata/filtered_logs.jsonl', board_size=6, delay=0.3)
 !git clone https://github.com/me/othello2025.git my_ai
 !git clone https://github.com/friend/othello2025.git friend_ai
 
-# 2. インポート
+# 2. Pythonパスに追加
+import sys
+sys.path.append('/content/my_ai')
+sys.path.append('/content/friend_ai')
+
+# 3. インポート
 from my_ai import myai as my_ai
 from friend_ai import myai as friend_ai
 
-# 3. 先攻・後攻入れ替えで2試合対戦
-from battle import battle_myais_double
-battle_myais_double(my_ai, friend_ai, name1="me", name2="friend", delay=0.3)
+# 4. 先攻・後攻入れ替えで2試合対戦
+from battle import battle_myais
+battle_myais(my_ai, friend_ai, name1="me", name2="friend", delay=0.3)
 ```
 
 ---

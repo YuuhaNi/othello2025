@@ -96,7 +96,14 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
     black_error = False
     white_error = False
 
-    # Canvasを作成
+    # IPython.displayをインポート
+    try:
+        from IPython.display import clear_output
+        has_ipython = True
+    except ImportError:
+        has_ipython = False
+
+    # Canvasを作成して初期表示
     canvas = Canvas(background='green', grid=width//len(board), width=width, height=width)
     draw_board(canvas, board)
     display(canvas)
@@ -128,9 +135,13 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
                     turn_count += 1
                     pbar.update(1)
 
-                    # 盤面を更新
+                    # 盤面を更新（その場で更新）
                     time.sleep(delay)
+                    if has_ipython:
+                        clear_output(wait=True)
+                    canvas = Canvas(background='green', grid=width//len(board), width=width, height=width)
                     draw_board(canvas, board)
+                    display(canvas)
 
                     moved = True
                 except Exception as e:
@@ -163,9 +174,13 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
                     turn_count += 1
                     pbar.update(1)
 
-                    # 盤面を更新
+                    # 盤面を更新（その場で更新）
                     time.sleep(delay)
+                    if has_ipython:
+                        clear_output(wait=True)
+                    canvas = Canvas(background='green', grid=width//len(board), width=width, height=width)
                     draw_board(canvas, board)
+                    display(canvas)
 
                     moved = True
                 except Exception as e:
@@ -207,37 +222,11 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
     return black, white, winner
 
 
-def battle_myais(myai1, myai2, name1="AI1", name2="AI2", board_size=6, width=300, delay=0.5):
+def _battle_single(myai1, myai2, name1="AI1", name2="AI2", board_size=6, width=300, delay=0.5):
     """
-    2つのmyai関数を1対1で対戦させる
-
-    使い方:
-        !git clone https://github.com/user1/othello2025.git a008
-        !git clone https://github.com/user2/othello2025.git a009
-
-        from a008 import myai as myai008
-        from a009 import myai as myai009
-
-        from battle import battle_myais
-        battle_myais(myai008, myai009, name1="a008", name2="a009", delay=0.5)
-
-    Args:
-        myai1: 黒番（先攻）のmyai関数
-        myai2: 白番（後攻）のmyai関数
-        name1: AI1の名前（表示用）
-        name2: AI2の名前（表示用）
-        board_size: 盤面サイズ (6 or 8)
-        width: Canvasの幅
-        delay: 各手の待機時間
-
-    Returns:
-        (black_count, white_count, winner): 対戦結果
+    内部関数: 2つのmyai関数を1試合だけ対戦させる
     """
     from othello import PandaAI
-
-    # myai関数をPandaAIでラップ
-    ai1 = PandaAI(myai1)
-    ai2 = PandaAI(myai2)
 
     # 名前を設定するためにカスタムクラスを作成
     class NamedAI:
@@ -256,10 +245,6 @@ def battle_myais(myai1, myai2, name1="AI1", name2="AI2", board_size=6, width=300
 
     ai1_named = NamedAI(myai1, name1)
     ai2_named = NamedAI(myai2, name2)
-
-    print(f"\n{'='*60}")
-    print(f"  1対1対戦: {name1} vs {name2}")
-    print(f"{'='*60}\n")
 
     # 対戦実行
     black, white, winner = run_othello_live(ai1_named, ai2_named, board_size, width, delay)
@@ -280,16 +265,30 @@ def battle_myais(myai1, myai2, name1="AI1", name2="AI2", board_size=6, width=300
     return black, white, winner
 
 
-def battle_myais_double(myai1, myai2, name1="AI1", name2="AI2", board_size=6, width=300, delay=0.5):
+def battle_myais(myai1, myai2, name1="AI1", name2="AI2", board_size=6, width=300, delay=0.5):
     """
     2つのmyai関数を先攻・後攻を入れ替えて2試合対戦させる
 
     使い方:
+        # GitHubからクローン
+        !git clone https://github.com/user1/othello2025.git a008
+        !git clone https://github.com/user2/othello2025.git a009
+
+        # Pythonパスに追加 (Colabの場合)
+        import sys
+        sys.path.append('/content/a008')
+        sys.path.append('/content/a009')
+
+        # またはディレクトリ移動
+        %cd a008
+
+        # インポート
         from a008 import myai as myai008
         from a009 import myai as myai009
 
-        from battle import battle_myais_double
-        battle_myais_double(myai008, myai009, name1="a008", name2="a009", delay=0.5)
+        # 対戦
+        from battle import battle_myais
+        battle_myais(myai008, myai009, name1="a008", name2="a009", delay=0.5)
 
     Args:
         myai1: 1つ目のmyai関数
@@ -310,11 +309,11 @@ def battle_myais_double(myai1, myai2, name1="AI1", name2="AI2", board_size=6, wi
 
     # 第1試合: myai1が先攻（黒）
     print(f"\n【第1試合】 {name1} (黒/先攻) vs {name2} (白/後攻)")
-    black1, white1, winner1 = battle_myais(myai1, myai2, name1, name2, board_size, width, delay)
+    black1, white1, winner1 = _battle_single(myai1, myai2, name1, name2, board_size, width, delay)
 
     # 第2試合: myai2が先攻（黒）
     print(f"\n【第2試合】 {name2} (黒/先攻) vs {name1} (白/後攻)")
-    black2, white2, winner2 = battle_myais(myai2, myai1, name2, name1, board_size, width, delay)
+    black2, white2, winner2 = _battle_single(myai2, myai1, name2, name1, board_size, width, delay)
 
     # 総合結果
     print(f"\n{'='*60}")
@@ -367,6 +366,10 @@ def battle_myais_double(myai1, myai2, name1="AI1", name2="AI2", board_size=6, wi
             name2: {'wins': wins2, 'stones': total2}
         }
     }
+
+
+# 後方互換性のためのエイリアス
+battle_myais_double = battle_myais
 
 
 def load_user_ais_from_github(jsonl_path):
