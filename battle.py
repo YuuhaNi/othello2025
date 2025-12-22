@@ -84,7 +84,10 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
         board = copy(board)
 
     # AIがNoneの場合はランダムAIを使用
-    from othello import PandaAI
+    try:
+        from .othello import PandaAI
+    except ImportError:
+        from othello import PandaAI
     if blackai is None:
         blackai = PandaAI()
     if whiteai is None:
@@ -245,7 +248,10 @@ def _battle_single(myai1, myai2, name1="AI1", name2="AI2", board_size=6, width=3
     """
     内部関数: 2つのmyai関数を1試合だけ対戦させる
     """
-    from othello import PandaAI
+    try:
+        from .othello import PandaAI
+    except ImportError:
+        from othello import PandaAI
 
     # 名前を設定するためにカスタムクラスを作成
     class NamedAI:
