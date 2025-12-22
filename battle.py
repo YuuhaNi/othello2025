@@ -44,7 +44,7 @@ def count_stone(board):
     return black, white
 
 
-def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.5):
+def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.5, name1=None, name2=None):
     """
     AI同士を対戦させ、リアルタイムで盤面を表示する
 
@@ -90,11 +90,18 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
     if whiteai is None:
         whiteai = PandaAI()
 
-    black_name = safe_face(blackai)
-    white_name = safe_face(whiteai)
+    # 内部処理用にアイコンを取得（ログ出力用）
+    black_icon = safe_face(blackai)
+    white_icon = safe_face(whiteai)
 
-    print(f'先攻（黒）: {black_name}')
-    print(f'後攻（白）: {white_name}')
+    # 名前が指定されていない場合はアイコンを使用
+    if name1 is None:
+        name1 = black_icon
+    if name2 is None:
+        name2 = white_icon
+
+    print(f'先攻（黒）: {name1}')
+    print(f'後攻（白）: {name2}')
 
     board = copy(board)
     black_time = 0
@@ -107,22 +114,15 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
 
     # IPython.displayをインポート
     try:
-        from IPython.display import clear_output, display as ipython_display
+        from IPython.display import clear_output
         has_ipython = True
     except ImportError:
         has_ipython = False
-        ipython_display = display
 
     # Canvasを作成して初期表示
     canvas = Canvas(background='green', grid=width//len(board), width=width, height=width)
     draw_board(canvas, board)
-
-    # display_idを使って更新可能にする
-    if has_ipython:
-        display_handle = ipython_display(canvas, display_id=True)
-    else:
-        display(canvas)
-        display_handle = None
+    display(canvas)
 
     # tqdmで進捗を表示
     with tqdm(total=max_turns, desc="対戦進行中", ncols=80) as pbar:
@@ -139,36 +139,35 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
                     black_time += think_time
 
                     if not can_place_x_y(board, BLACK, x, y):
-                        print(f'黒 {black_name}は、置けないところに置こうとしました {(x, y)}')
+                        print(f'黒 {name1}は、置けないところに置こうとしました {(x, y)}')
                         print('反則負けです')
                         black_error = True
                         break
 
                     move_stone(board, BLACK, x, y)
                     black, white = count_stone(board)
-                    print(f'黒 {black_name}は{(x, y)}におきました。黒: {black}, 白: {white} (思考時間: {think_time:.5f}秒)')
+                    print(f'黒 {name1}は{(x, y)}におきました。黒: {black}, 白: {white} (思考時間: {think_time:.5f}秒)')
 
                     turn_count += 1
                     pbar.update(1)
 
                     # 盤面を更新（その場で更新）
                     time.sleep(delay)
+                    if has_ipython:
+                        clear_output(wait=True)
                     canvas = Canvas(background='green', grid=width//len(board), width=width, height=width)
                     draw_board(canvas, board)
-                    if has_ipython and display_handle:
-                        display_handle.update(canvas)
-                    else:
-                        display(canvas)
+                    display(canvas)
 
                     moved = True
                 except Exception as e:
-                    print(f'黒 {black_name}でエラーが発生しました: {e}')
+                    print(f'黒 {name1}でエラーが発生しました: {e}')
                     print('エラーのため黒の石は0個として扱います')
                     black_error = True
                     break
             else:
                 if can_place(board, WHITE):
-                    print(f'{black_name}は、どこにも置けないのでスキップします')
+                    print(f'{name1}は、どこにも置けないのでスキップします')
 
             # 白のターン
             if can_place(board, WHITE):
@@ -179,36 +178,35 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
                     white_time += think_time
 
                     if not can_place_x_y(board, WHITE, x, y):
-                        print(f'白 {white_name}は、置けないところに置こうとしました {(x, y)}')
+                        print(f'白 {name2}は、置けないところに置こうとしました {(x, y)}')
                         print('反則負けです')
                         white_error = True
                         break
 
                     move_stone(board, WHITE, x, y)
                     black, white = count_stone(board)
-                    print(f'白 {white_name}は{(x, y)}におきました。黒: {black}, 白: {white} (思考時間: {think_time:.5f}秒)')
+                    print(f'白 {name2}は{(x, y)}におきました。黒: {black}, 白: {white} (思考時間: {think_time:.5f}秒)')
 
                     turn_count += 1
                     pbar.update(1)
 
                     # 盤面を更新（その場で更新）
                     time.sleep(delay)
+                    if has_ipython:
+                        clear_output(wait=True)
                     canvas = Canvas(background='green', grid=width//len(board), width=width, height=width)
                     draw_board(canvas, board)
-                    if has_ipython and display_handle:
-                        display_handle.update(canvas)
-                    else:
-                        display(canvas)
+                    display(canvas)
 
                     moved = True
                 except Exception as e:
-                    print(f'白 {white_name}でエラーが発生しました: {e}')
+                    print(f'白 {name2}でエラーが発生しました: {e}')
                     print('エラーのため白の石は0個として扱います')
                     white_error = True
                     break
             else:
                 if can_place(board, BLACK):
-                    print(f'{white_name}は、どこにも置けないのでスキップします')
+                    print(f'{name2}は、どこにも置けないのでスキップします')
 
             # 両方とも打てない場合は終了
             if not can_place(board, BLACK) and not can_place(board, WHITE):
@@ -222,20 +220,20 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
     else:
         black, white = count_stone(board)
 
-    print(f'最終結果: 黒 {black_name}: {black}, 白 {white_name}: {white}', end=' ')
+    print(f'最終結果: 黒 {name1}: {black}, 白 {name2}: {white}', end=' ')
 
     # 勝者の判定
     if black > white:
         winner = 'black'
-        print(f'黒 {black_name}の勝ち')
+        print(f'黒 {name1}の勝ち')
     elif black < white:
         winner = 'white'
-        print(f'白 {white_name}の勝ち')
+        print(f'白 {name2}の勝ち')
     else:
         winner = 'draw'
         print('引き分け')
 
-    print(f'思考時間: 黒 {black_name}: {black_time:.5f}秒, 白 {white_name}: {white_time:.5f}秒')
+    print(f'思考時間: 黒 {name1}: {black_time:.5f}秒, 白 {name2}: {white_time:.5f}秒')
 
     return black, white, winner
 
@@ -264,8 +262,8 @@ def _battle_single(myai1, myai2, name1="AI1", name2="AI2", board_size=6, width=3
     ai1_named = NamedAI(myai1, name1)
     ai2_named = NamedAI(myai2, name2)
 
-    # 対戦実行
-    black, white, winner = run_othello_live(ai1_named, ai2_named, board_size, width, delay)
+    # 対戦実行（名前を渡す）
+    black, white, winner = run_othello_live(ai1_named, ai2_named, board_size, width, delay, name1, name2)
 
     print(f"\n{'='*60}")
     print(f"  対戦結果")
