@@ -120,6 +120,7 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
         has_ipython = False
 
     # Canvasを作成して初期表示
+    print(f'先攻（黒）: {name1}  vs  後攻（白）: {name2}')
     canvas = Canvas(background='green', grid=width//len(board), width=width, height=width)
     draw_board(canvas, board)
     display(canvas)
@@ -155,6 +156,7 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
                     time.sleep(delay)
                     if has_ipython:
                         clear_output(wait=True)
+                    print(f'先攻（黒）: {name1}  vs  後攻（白）: {name2}')
                     canvas = Canvas(background='green', grid=width//len(board), width=width, height=width)
                     draw_board(canvas, board)
                     display(canvas)
@@ -194,6 +196,7 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
                     time.sleep(delay)
                     if has_ipython:
                         clear_output(wait=True)
+                    print(f'先攻（黒）: {name1}  vs  後攻（白）: {name2}')
                     canvas = Canvas(background='green', grid=width//len(board), width=width, height=width)
                     draw_board(canvas, board)
                     display(canvas)
