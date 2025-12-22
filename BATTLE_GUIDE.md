@@ -8,24 +8,19 @@ GitHubから2つのリポジトリをクローンして、それぞれの`myai`�
 **先攻・後攻を入れ替えて2試合**行い、総合結果を表示します。
 
 ```python
-# GitHubからリポジトリをクローン
+# 1. メインリポジトリをクローン（battle.pyがここにある）
+!git clone https://github.com/YuuhaNi/othello2025.git
+
+# 2. 対戦相手のリポジトリをクローン
 !git clone https://github.com/user1/othello2025.git a008
 !git clone https://github.com/user2/othello2025.git a009
 
-# Pythonパスに追加（Colabの場合）
-import sys
-sys.path.append('/content/a008')
-sys.path.append('/content/a009')
-
-# またはディレクトリ移動
-# %cd a008
-
-# myai関数をインポート
+# 3. インポート
 from a008 import myai as myai008
 from a009 import myai as myai009
+from othello2025.battle import battle_myais
 
-# 対戦させる（2試合）
-from battle import battle_myais
+# 4. 対戦させる（2試合）
 battle_myais(myai008, myai009, name1="a008", name2="a009", delay=0.5)
 ```
 
@@ -112,20 +107,16 @@ battle_myais(myai008, greedy_place, name1="a008", name2="greedy", delay=0.5)
 
 ```python
 # 1. リポジトリをクローン
+!git clone https://github.com/YuuhaNi/othello2025.git
 !git clone https://github.com/me/othello2025.git my_ai
 !git clone https://github.com/friend/othello2025.git friend_ai
 
-# 2. Pythonパスに追加
-import sys
-sys.path.append('/content/my_ai')
-sys.path.append('/content/friend_ai')
-
-# 3. インポート
+# 2. インポート
 from my_ai import myai as my_ai
 from friend_ai import myai as friend_ai
+from othello2025.battle import battle_myais
 
-# 4. 先攻・後攻入れ替えで2試合対戦
-from battle import battle_myais
+# 3. 先攻・後攻入れ替えで2試合対戦
 battle_myais(my_ai, friend_ai, name1="me", name2="friend", delay=0.3)
 ```
 

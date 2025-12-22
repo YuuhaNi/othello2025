@@ -5,6 +5,14 @@ AI同士を対戦させ、リアルタイムで盤面の変化を見ることが
 
 import time
 import sys
+import os
+
+# このファイルのディレクトリを自動的にsys.pathに追加
+# これにより、ユーザーが手動で%cdやsys.path.appendをしなくても
+# othello.pyやai/などをインポートできる
+_battle_dir = os.path.dirname(os.path.abspath(__file__))
+if _battle_dir not in sys.path:
+    sys.path.insert(0, _battle_dir)
 
 try:
     from tqdm import tqdm
@@ -85,7 +93,8 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
     black_name = safe_face(blackai)
     white_name = safe_face(whiteai)
 
-    print(f'先手 黒 {black_name} 後手 白 {white_name}')
+    print(f'先攻（黒）: {black_name}')
+    print(f'後攻（白）: {white_name}')
 
     board = copy(board)
     black_time = 0
@@ -98,15 +107,22 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
 
     # IPython.displayをインポート
     try:
-        from IPython.display import clear_output
+        from IPython.display import clear_output, display as ipython_display
         has_ipython = True
     except ImportError:
         has_ipython = False
+        ipython_display = display
 
     # Canvasを作成して初期表示
     canvas = Canvas(background='green', grid=width//len(board), width=width, height=width)
     draw_board(canvas, board)
-    display(canvas)
+
+    # display_idを使って更新可能にする
+    if has_ipython:
+        display_handle = ipython_display(canvas, display_id=True)
+    else:
+        display(canvas)
+        display_handle = None
 
     # tqdmで進捗を表示
     with tqdm(total=max_turns, desc="対戦進行中", ncols=80) as pbar:
@@ -137,11 +153,12 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
 
                     # 盤面を更新（その場で更新）
                     time.sleep(delay)
-                    if has_ipython:
-                        clear_output(wait=True)
                     canvas = Canvas(background='green', grid=width//len(board), width=width, height=width)
                     draw_board(canvas, board)
-                    display(canvas)
+                    if has_ipython and display_handle:
+                        display_handle.update(canvas)
+                    else:
+                        display(canvas)
 
                     moved = True
                 except Exception as e:
@@ -176,11 +193,12 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
 
                     # 盤面を更新（その場で更新）
                     time.sleep(delay)
-                    if has_ipython:
-                        clear_output(wait=True)
                     canvas = Canvas(background='green', grid=width//len(board), width=width, height=width)
                     draw_board(canvas, board)
-                    display(canvas)
+                    if has_ipython and display_handle:
+                        display_handle.update(canvas)
+                    else:
+                        display(canvas)
 
                     moved = True
                 except Exception as e:
