@@ -336,6 +336,9 @@ def battle_myais(myai1, myai2, name1="AI1", name2="AI2", board_size=6, width=300
     print(f"\n【第1試合】 {name1} (黒/先攻) vs {name2} (白/後攻)")
     black1, white1, winner1 = _battle_single(myai1, myai2, name1, name2, board_size, width, delay)
 
+    time.sleep(0.7)
+    print("【第2試合】")
+
     # 第2試合: myai2が先攻（黒）
     print(f"\n【第2試合】 {name2} (黒/先攻) vs {name1} (白/後攻)")
     black2, white2, winner2 = _battle_single(myai2, myai1, name2, name1, board_size, width, delay)
