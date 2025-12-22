@@ -157,7 +157,8 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=1.
                     time.sleep(delay)
                     if has_ipython:
                         clear_output(wait=True)
-                    print(f'先攻（黒）: {name1}  vs  後攻（白）: {name2}')
+                    print(f'先攻（黒）: {black_icon} {name1}')
+                    print(f'後攻（白）: {white_icon} {name2}')
                     canvas = Canvas(background='green', grid=width//len(board), width=width, height=width)
                     draw_board(canvas, board)
                     display(canvas)
