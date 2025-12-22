@@ -18,7 +18,7 @@ GitHubから2つのリポジトリをクローンして、それぞれの`myai`�
 # 3. インポート
 from a008 import myai as myai008
 from a009 import myai as myai009
-from othello2025.battle import battle_myais
+from othello2025 import battle_myais
 
 # 4. 対戦させる（2試合）
 battle_myais(myai008, myai009, name1="a008", name2="a009", delay=0.5)
@@ -114,7 +114,7 @@ battle_myais(myai008, greedy_place, name1="a008", name2="greedy", delay=0.5)
 # 2. インポート
 from my_ai import myai as my_ai
 from friend_ai import myai as friend_ai
-from othello2025.battle import battle_myais
+from othello2025 import battle_myais
 
 # 3. 先攻・後攻入れ替えで2試合対戦
 battle_myais(my_ai, friend_ai, name1="me", name2="friend", delay=0.3)
