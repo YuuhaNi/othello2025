@@ -44,7 +44,7 @@ def count_stone(board):
     return black, white
 
 
-def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.5, name1=None, name2=None):
+def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=1.0, name1=None, name2=None):
     """
     AI同士を対戦させ、リアルタイムで盤面を表示する
 
@@ -103,8 +103,9 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
     if name2 is None:
         name2 = white_icon
 
-    print(f'先攻（黒）: {name1}')
-    print(f'後攻（白）: {name2}')
+    print(f'{black_icon}が相手するよ！覚悟しな！')
+    print(f'先攻（黒）: {black_icon} {name1}')
+    print(f'後攻（白）: {white_icon} {name2}')
 
     board = copy(board)
     black_time = 0
@@ -244,7 +245,7 @@ def run_othello_live(blackai=None, whiteai=None, board=None, width=300, delay=0.
     return black, white, winner
 
 
-def _battle_single(myai1, myai2, name1="AI1", name2="AI2", board_size=6, width=300, delay=0.5):
+def _battle_single(myai1, myai2, name1="AI1", name2="AI2", board_size=6, width=300, delay=1.0):
     """
     内部関数: 2つのmyai関数を1試合だけ対戦させる
     """
@@ -290,7 +291,7 @@ def _battle_single(myai1, myai2, name1="AI1", name2="AI2", board_size=6, width=3
     return black, white, winner
 
 
-def battle_myais(myai1, myai2, name1="AI1", name2="AI2", board_size=6, width=300, delay=0.5):
+def battle_myais(myai1, myai2, name1="AI1", name2="AI2", board_size=6, width=300, delay=1.0):
     """
     2つのmyai関数を先攻・後攻を入れ替えて2試合対戦させる
 
@@ -410,7 +411,7 @@ def load_user_ais_from_github(jsonl_path):
         return []
 
 
-def battle_user_ais(jsonl_path, board_size=6, width=300, delay=0.5):
+def battle_user_ais(jsonl_path, board_size=6, width=300, delay=1.0):
     """
     GitHubに投稿されたユーザーのmyai同士を対戦させる
 
@@ -508,7 +509,7 @@ def battle_user_ais(jsonl_path, board_size=6, width=300, delay=0.5):
     return results
 
 
-def battle_tournament(ai_list, board_size=6, width=300, delay=0.3):
+def battle_tournament(ai_list, board_size=6, width=300, delay=1.0):
     """
     複数のAIで総当たり戦を行う
 
